@@ -15,4 +15,4 @@ $hcpp->register_uninstall_script( dirname(__FILE__) . '/uninstall' );
 $hcpp->add_action( 'start_nodeapp_services', function( $args ) {
     global $hcpp;
     $hcpp->log( $args );
-});
+}, 20);
