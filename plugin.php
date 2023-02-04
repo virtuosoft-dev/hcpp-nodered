@@ -21,6 +21,11 @@ $hcpp->add_action( 'start_nodeapp_services', function( $args ) {
 
         global $hcpp;
         $hcpp->log( 'NodeRED: Starting nodered.config.js instead of app.config.js' );
+
+        // TODO: check settings.js for subfolder installation and write to
+        // %home%/%user%/conf/web/%domain%/nginx.ssl.conf_nodered_subfolder.conf
+        // and // %home%/%user%/conf/web/%domain%/nginx.conf_nodered_subfolder.conf
+        // otherwise, erase them.
     }
     return $args;
 }, 20);
