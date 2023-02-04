@@ -26,7 +26,7 @@ $hcpp->add_action( 'start_nodeapp_services', function( $args ) {
 }, 20);
 
 // Look for nodered.config.js to shutdown instead of app.config.js
-$hcpp->add_action( 'shutdown_nodeapp_services', function( $args ) ) {
+$hcpp->add_action( 'shutdown_nodeapp_services', function( $args ) {
     $user = $args[0];
     $domain = $args[1];
     $nodeapp = "/home/$user/web/$domain/nodeapp";
