@@ -1,10 +1,8 @@
 <?php
 
 namespace Hestia\WebApp\Installers\NodeRED;
-
-use Hestia\System\Util;
 use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
-use function Hestiacp\quoteshellarg\quoteshellarg;
+require_once( '/usr/local/hestia/web/pluginable.php' );
 
 class NodeREDSetup extends BaseSetup {
 	protected $appInfo = [
@@ -35,8 +33,13 @@ class NodeREDSetup extends BaseSetup {
 	];
 
 	public function install(array $options = null) {
-		parent::install($options);
-		parent::setup($options);
+		global $hcpp;
+
+		$parse = explode( '/', $this->getDocRoot() );
+		$options['user'] = $parse[2];
+		$options['domain'] = $parse[4];
+		$hcpp->do_action( 'nodered_install', $options );
+		
 		return true;
 	}
 }

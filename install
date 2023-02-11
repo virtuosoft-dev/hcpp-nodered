@@ -21,4 +21,4 @@ fi
 rsync -r ./Installers/ /usr/local/hestia/web/src/app/WebApp/Installers/
 
 # Notify installation has finished
-/usr/local/hestia/bin/v-add-user-notification admin "Node-RED" "&#11088; Node-RED plugin has finished installing."
+/usr/local/hestia/bin/v-add-user-notification admin "Node-RED" "&#128571; Node-RED plugin has finished installing."
