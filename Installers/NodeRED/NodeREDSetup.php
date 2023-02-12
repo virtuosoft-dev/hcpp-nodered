@@ -39,7 +39,7 @@ class NodeREDSetup extends BaseSetup {
 		$options['user'] = $parse[2];
 		$options['domain'] = $parse[4];
 		$hcpp->do_action( 'nodered_install', $options );
-		
+
 		return true;
 	}
 }
