@@ -5,6 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 # Install Node-RED
 ############################################
 
+dir=$PWD
 if [ ! -d "/opt/node-red" ]; then
 
     mkdir -p /opt/node-red
@@ -18,6 +19,7 @@ if [ ! -d "/opt/node-red" ]; then
 fi
 
 # Copy over our Quick Install App
+cd $dir
 rsync -r ./Installers/ /usr/local/hestia/web/src/app/WebApp/Installers/
 
 # Notify installation has finished
