@@ -19,7 +19,7 @@ $hcpp->add_action( 'nodered_install', function( $options ) {
     return $options;
 });
 
-// Display a message on the Node-RED install page
+// Custom install page
 $hcpp->add_action( 'render_page_body_WEB_setup_webapp', function( $content ) {
     global $hcpp;
     if ( strpos( $_SERVER['REQUEST_URI'], '/add/webapp/?app=NodeRED&' ) === false ) return $content;
@@ -37,30 +37,49 @@ $hcpp->add_action( 'render_page_body_WEB_setup_webapp', function( $content ) {
     $content .= '
     <script>
         $(function() {
-            let bc = $("#webapp_nodered_username").css("border-color");
+            let borderColor = $("#webapp_nodered_username").css("border-color");
+            let toolbar = $(".l-center.edit").html();
             function nr_validate() {
                 if ( $("#webapp_nodered_username").val().trim() == "" || $("#webapp_nodered_password").val().trim() == "" ) {
-                    $("a[data-action=submit]").css("opacity", "0.5").css("cursor", "not-allowed");
+                    $(".l-unit-toolbar__buttonstrip.float-right a").css("opacity", "0.5").css("cursor", "not-allowed");
                     if ($("#webapp_nodered_username").val().trim() == "") {
                         $("#webapp_nodered_username").css("border-color", "red");
                     }else{
-                        $("#webapp_nodered_username").css("border-color", bc);
+                        $("#webapp_nodered_username").css("border-color", borderColor);
                     }
                     if ($("#webapp_nodered_password").val().trim() == "") {
                         $("#webapp_nodered_password").css("border-color", "red");
                     }else{
-                        $("#webapp_nodered_password").css("border-color", bc);
+                        $("#webapp_nodered_password").css("border-color", borderColor);
                     }
                     return false;
                 }else{
-                    $("a[data-action=submit]").css("opacity", "1").css("cursor", "");
-                    $("#webapp_nodered_username").css("border-color", bc);
-                    $("#webapp_nodered_password").css("border-color", bc);
+                    $(".l-unit-toolbar__buttonstrip.float-right a").css("opacity", "1").css("cursor", "");
+                    $("#webapp_nodered_username").css("border-color", borderColor);
+                    $("#webapp_nodered_password").css("border-color", borderColor);
                     return true;
                 }
             };
-            $("#webapp_nodered_username").on("change", nr_validate);
-            $("#webapp_nodered_password").on("change", nr_validate);
+
+            // Override the form submition
+            $(".l-unit-toolbar__buttonstrip.float-right a").removeAttr("data-action").removeAttr("data-id").click(function() {
+                if ( nr_validate() ) {
+                    $(".l-sort.clearfix").html("<div class=\"l-unit-toolbar__buttonstrip\"></div><div class=\"l-unit-toolbar__buttonstrip float-right\"><div><div class=\"timer-container\" style=\"float:right;\"><div class=\"timer-button spinner\"><div class=\"spinner-inner\"></div><div class=\"spinner-mask\"></div> <div class=\"spinner-mask-two\"></div></div></div></div></div>");
+                    $("#vstobjects").submit();
+                }
+            });
+            $("#vstobjects").submit(function(e) {
+                if ( !nr_validate() ) {
+                    e.preventDefault();
+                }
+            });
+            $("#webapp_nodered_username").blur(nr_validate).keyup(nr_validate);
+            $("#webapp_nodered_password").blur(nr_validate).keyup(nr_validate);
+            $(".generate").click(function() {
+                setTimeout(function() {
+                    nr_validate();
+                }, 500)
+            });
             nr_validate();
         });
     </script>
