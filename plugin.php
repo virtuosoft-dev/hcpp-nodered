@@ -33,12 +33,13 @@ $hcpp->add_action( 'render_page_body_WEB_setup_webapp', function( $content ) {
     $msg .= 'Files will be overwritten; be sure the specified <span style="font-weight:bold">Install Directory</span> is empty!</span></div><br>';
     $content = str_replace( '<div class="app-form">', '<div class="app-form">' . $msg, $content );
 
-    // Enforce username and password
+    // Enforce username and password, remove PHP version
     $content .= '
     <script>
         $(function() {
             let borderColor = $("#webapp_nodered_username").css("border-color");
             let toolbar = $(".l-center.edit").html();
+            $("label[for=\"webapp_php_version\"]").parent().hide();
             function nr_validate() {
                 if ( $("#webapp_nodered_username").val().trim() == "" || $("#webapp_nodered_password").val().trim() == "" ) {
                     $(".l-unit-toolbar__buttonstrip.float-right a").css("opacity", "0.5").css("cursor", "not-allowed");
