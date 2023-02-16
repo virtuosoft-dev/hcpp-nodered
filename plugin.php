@@ -28,11 +28,24 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
 
     // Create the nodeapp folder 
     $cmd = "mkdir -p " . escapeshellarg( $nodeapp_folder ) . " && ";
-    $cmd .= "&& chown -R $user:$user " . escapeshellarg( "/home/$user/web/$domain/nodeapp" );
+    $cmd .= "chown -R $user:$user " . escapeshellarg( "/home/$user/web/$domain/nodeapp" );
     shell_exec( $cmd );
 
     // Copy over nodered files
     $hcpp->nodeapp->copy_folder( __DIR__ . '/nodeapp', $nodeapp_folder, $user );
+    shell_exec( $cmd );
+
+    // Update settings.js with our user options
+    $settings = file_get_contents( $nodeapp_folder . '/settings.js' );
+    $settings = str_replace( '%nodered_username$', $options['nodered_username'], $settings );
+    $settings = str_replace( '%nodered_password$', $options['nodered_password'], $settings );
+    if ( isset( $options['projects'] ) ) {
+        $settings = str_replace( '%projects%', $options['projects'], $settings );
+    }
+    file_put_contents( $nodeapp_folder . '/settings.js', $settings );
+
+    // Start the given Node-RED instance
+
     return $args;
 });
 
@@ -42,7 +55,7 @@ $hcpp->add_action( 'render_page_body_WEB_setup_webapp', function( $content ) {
     if ( strpos( $_SERVER['REQUEST_URI'], '/add/webapp/?app=NodeRED&' ) === false ) return $content;
 
     // Suppress Data loss alert, and PHP version selector
-    $content = '<style>#vstobjects > div > div:nth-child(10), .alert.alert-info.alert-with-icon{display:none;}</style>' . $content;
+    $content = '<style>.form-group:last-of-type,.alert.alert-info.alert-with-icon{display:none;}</style>' . $content;
 
     if ( !is_dir('/usr/local/hestia/plugins/nodeapp') ) {
 
