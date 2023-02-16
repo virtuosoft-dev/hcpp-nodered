@@ -16,8 +16,6 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     if ( $args[0] != 'nodered_install' ) return $args;
 
     global $hcpp;
-    $hcpp->log( "Got invoke_plugin" );
-    $hcpp->log( $args );
     $options = json_decode( $args[1], true );
 
     $user = $options['user'];
@@ -33,14 +31,17 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
 
     // Copy over nodered files
     $hcpp->nodeapp->copy_folder( __DIR__ . '/nodeapp', $nodeapp_folder, $user );
-    shell_exec( $cmd );
 
     // Update settings.js with our user options
     $settings = file_get_contents( $nodeapp_folder . '/settings.js' );
-    $settings = str_replace( '%nodered_username$', $options['nodered_username'], $settings );
-    $settings = str_replace( '%nodered_password$', $options['nodered_password'], $settings );
+    $hcpp->log( "Got settings.js" );
+    $hcpp->log( $options );
+    $settings = str_replace( '%nodered_username%', $options['nodered_username'], $settings );
+    $settings = str_replace( '%nodered_password%', $options['nodered_password'], $settings );
     if ( isset( $options['projects'] ) ) {
         $settings = str_replace( '%projects%', $options['projects'], $settings );
+    }else{
+        $settings = str_replace( '%projects%', 'false', $settings );
     }
     file_put_contents( $nodeapp_folder . '/settings.js', $settings );
 
