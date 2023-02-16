@@ -45,7 +45,11 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     }
     file_put_contents( $nodeapp_folder . '/settings.js', $settings );
 
-    // Start the given Node-RED instance
+    // Cleanup, allocate ports, prepare nginx and start services
+    $this->shutdown_apps( $nodeapp_folder );
+    $this->allocate_ports( $nodeapp_folder );
+    $this->generate_nginx_files( $nodeapp_folder );
+    $this->startup_apps( $nodeapp_folder );    
 
     return $args;
 });
