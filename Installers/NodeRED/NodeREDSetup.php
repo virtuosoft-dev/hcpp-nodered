@@ -18,7 +18,7 @@ class NodeREDSetup extends BaseSetup {
 		"form" => [
 			"nodered_username" => ["value" => "nradmin"],
 			"nodered_password" => "password",
-			"nodeapp_folder" => ["type" => "text", "value" => "", "placeholder" => "/", "label" => "Install Directory"],
+			"nodered_folder" => ["type" => "text", "value" => "", "placeholder" => "/", "label" => "Install Directory"],
 			"projects" => ["type" => "boolean", "value" => false, "label" => "Enable Git Projects"],
 		],
 		"database" => false,

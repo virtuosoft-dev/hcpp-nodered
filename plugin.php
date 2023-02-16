@@ -20,22 +20,21 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
 
     $user = $options['user'];
     $domain = $options['domain'];
-    $nodeapp_folder = $options['nodeapp_folder'];
-    if ( $nodeapp_folder == '' || $nodeapp_folder[0] != '/' ) $nodeapp_folder = '/' . $nodeapp_folder;
-    $nodeapp_folder = "/home/$user/web/$domain/nodeapp$nodeapp_folder";
+    $nodered_folder = $options['nodered_folder'];
+    if ( $nodered_folder == '' || $nodered_folder[0] != '/' ) $nodered_folder = '/' . $nodered_folder;
+    $nodeapp_folder = "/home/$user/web/$domain/nodeapp";
+    $nodered_folder = $nodeapp_folder . $nodered_folder;
 
     // Create the nodeapp folder 
-    $cmd = "mkdir -p " . escapeshellarg( $nodeapp_folder ) . " && ";
-    $cmd .= "chown -R $user:$user " . escapeshellarg( "/home/$user/web/$domain/nodeapp" );
+    $cmd = "mkdir -p " . escapeshellarg( $nodered_folder ) . " && ";
+    $cmd .= "chown -R $user:$user " . escapeshellarg( $nodeapp_folder );
     shell_exec( $cmd );
 
     // Copy over nodered files
-    $hcpp->nodeapp->copy_folder( __DIR__ . '/nodeapp', $nodeapp_folder, $user );
+    $hcpp->nodeapp->copy_folder( __DIR__ . '/nodeapp', $nodered_folder, $user );
 
     // Update settings.js with our user options
-    $settings = file_get_contents( $nodeapp_folder . '/settings.js' );
-    $hcpp->log( "Got settings.js" );
-    $hcpp->log( $options );
+    $settings = file_get_contents( $nodered_folder . '/settings.js' );
     $settings = str_replace( '%nodered_username%', $options['nodered_username'], $settings );
     $settings = str_replace( '%nodered_password%', $options['nodered_password'], $settings );
     if ( isset( $options['projects'] ) ) {
@@ -43,14 +42,13 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     }else{
         $settings = str_replace( '%projects%', 'false', $settings );
     }
-    file_put_contents( $nodeapp_folder . '/settings.js', $settings );
+    file_put_contents( $nodered_folder . '/settings.js', $settings );
 
     // Cleanup, allocate ports, prepare nginx and start services
-    $this->shutdown_apps( $nodeapp_folder );
-    $this->allocate_ports( $nodeapp_folder );
-    $this->generate_nginx_files( $nodeapp_folder );
-    $this->startup_apps( $nodeapp_folder );    
-
+    $hcpp->nodeapp->shutdown_apps( $nodeapp_folder );
+    $hcpp->nodeapp->allocate_ports( $nodeapp_folder );
+    $hcpp->nodeapp->generate_nginx_files( $nodeapp_folder );
+    $hcpp->nodeapp->startup_apps( $nodeapp_folder );    
     return $args;
 });
 
