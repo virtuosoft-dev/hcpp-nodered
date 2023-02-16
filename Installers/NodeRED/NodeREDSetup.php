@@ -18,7 +18,7 @@ class NodeREDSetup extends BaseSetup {
 		"form" => [
 			"nodered_username" => ["value" => "nradmin"],
 			"nodered_password" => "password",
-			"install_directory" => ["type" => "text", "value" => "", "placeholder" => "/"],
+			"nodeapp_folder" => ["type" => "text", "value" => "", "placeholder" => "/", "label" => "Install Directory"],
 			"projects" => ["type" => "boolean", "value" => false, "label" => "Enable Git Projects"],
 		],
 		"database" => false,
@@ -39,7 +39,7 @@ class NodeREDSetup extends BaseSetup {
 		$options['user'] = $parse[2];
 		$options['domain'] = $parse[4];
 		$hcpp->do_action( 'nodered_install', $options );
-
+		$hcpp->run( 'invoke-plugin nodered_install ' . escapeshellarg( json_encode( $options ) ) );
 		return true;
 	}
 }

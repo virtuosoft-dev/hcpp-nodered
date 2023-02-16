@@ -12,11 +12,28 @@ $hcpp->register_install_script( dirname(__FILE__) . '/install' );
 $hcpp->register_uninstall_script( dirname(__FILE__) . '/uninstall' );
 
 // Install Node-RED based on the given user options
-$hcpp->add_action( 'nodered_install', function( $options ) {
+$hcpp->add_action( 'invoke_plugin', function( $args ) {
+    if ( $args[0] != 'nodered_install' ) return $args;
+
     global $hcpp;
-    $hcpp->log( 'NodeRED: Installing NodeRED' );
-    $hcpp->log( $options );
-    return $options;
+    $hcpp->log( "Got invoke_plugin" );
+    $hcpp->log( $args );
+    $options = json_decode( $args[1], true );
+
+    $user = $options['user'];
+    $domain = $options['domain'];
+    $nodeapp_folder = $options['nodeapp_folder'];
+    if ( $nodeapp_folder == '' || $nodeapp_folder[0] != '/' ) $nodeapp_folder = '/' . $nodeapp_folder;
+    $nodeapp_folder = "/home/$user/web/$domain/nodeapp$nodeapp_folder";
+
+    // Create the nodeapp folder 
+    $cmd = "mkdir -p " . escapeshellarg( $nodeapp_folder ) . " && ";
+    $cmd .= "&& chown -R $user:$user " . escapeshellarg( "/home/$user/web/$domain/nodeapp" );
+    shell_exec( $cmd );
+
+    // Copy over nodered files
+    $hcpp->nodeapp->copy_folder( __DIR__ . '/nodeapp', $nodeapp_folder, $user );
+    return $args;
 });
 
 // Custom install page
@@ -24,66 +41,77 @@ $hcpp->add_action( 'render_page_body_WEB_setup_webapp', function( $content ) {
     global $hcpp;
     if ( strpos( $_SERVER['REQUEST_URI'], '/add/webapp/?app=NodeRED&' ) === false ) return $content;
 
-    // Display install information
-    $content = '<style>#vstobjects > div > div:nth-child(8), .app-form span.alert{display:none;}</style>' . $content;
-    $msg = '<div style="margin-top:-20px;width:75%;"><span>';
-    $msg .= 'The Node-RED framework lives inside the "nodeapp" folder (adjacent to "public_html"). ';
-    $msg .= 'It can be a standalone instance in the domain root, or in a subfolder using the ';
-    $msg .= '<b>Install Directory</b> field below.</span><br><span style="font-style:italic;color:darkorange;">';
-    $msg .= 'Files will be overwritten; be sure the specified <span style="font-weight:bold">Install Directory</span> is empty!</span></div><br>';
-    $content = str_replace( '<div class="app-form">', '<div class="app-form">' . $msg, $content );
+    // Suppress Data loss alert, and PHP version selector
+    $content = '<style>#vstobjects > div > div:nth-child(10), .alert.alert-info.alert-with-icon{display:none;}</style>' . $content;
 
-    // Enforce username and password, remove PHP version
-    $content .= '
-    <script>
-        $(function() {
-            let borderColor = $("#webapp_nodered_username").css("border-color");
-            let toolbar = $(".l-center.edit").html();
-            $("label[for=\"webapp_php_version\"]").parent().hide();
-            function nr_validate() {
-                if ( $("#webapp_nodered_username").val().trim() == "" || $("#webapp_nodered_password").val().trim() == "" ) {
-                    $(".l-unit-toolbar__buttonstrip.float-right a").css("opacity", "0.5").css("cursor", "not-allowed");
-                    if ($("#webapp_nodered_username").val().trim() == "") {
-                        $("#webapp_nodered_username").css("border-color", "red");
+    if ( !is_dir('/usr/local/hestia/plugins/nodeapp') ) {
+
+        // Display missing nodeapp requirement
+        $content = '<style>.form-group{display:none;}</style>' . $content;
+        $msg = '<div style="margin-top:-20px;width:75%;"><span>';
+        $msg .= 'Cannot contiue. The Node-RED Quick Installer requires the NodeApp plugin.</span>';
+        $msg .= '<script>$(function(){$(".l-unit-toolbar__buttonstrip.float-right a").css("display", "none");});</script>';
+    }else{
+
+        // Display install information
+        $msg = '<div style="margin-top:-20px;width:75%;"><span>';
+        $msg .= 'The Node-RED framework lives inside the "nodeapp" folder (adjacent to "public_html"). ';
+        $msg .= 'It can be a standalone instance in the domain root, or in a subfolder using the ';
+        $msg .= '<b>Install Directory</b> field below.</span><br><span style="font-style:italic;color:darkorange;">';
+        $msg .= 'Files will be overwritten; be sure the specified <span style="font-weight:bold">Install Directory</span> is empty!</span></div><br>';
+        
+        // Enforce username and password, remove PHP version
+        $msg .= '
+        <script>
+            $(function() {
+                let borderColor = $("#webapp_nodered_username").css("border-color");
+                let toolbar = $(".l-center.edit").html();
+                function nr_validate() {
+                    if ( $("#webapp_nodered_username").val().trim() == "" || $("#webapp_nodered_password").val().trim() == "" ) {
+                        $(".l-unit-toolbar__buttonstrip.float-right a").css("opacity", "0.5").css("cursor", "not-allowed");
+                        if ($("#webapp_nodered_username").val().trim() == "") {
+                            $("#webapp_nodered_username").css("border-color", "red");
+                        }else{
+                            $("#webapp_nodered_username").css("border-color", borderColor);
+                        }
+                        if ($("#webapp_nodered_password").val().trim() == "") {
+                            $("#webapp_nodered_password").css("border-color", "red");
+                        }else{
+                            $("#webapp_nodered_password").css("border-color", borderColor);
+                        }
+                        return false;
                     }else{
+                        $(".l-unit-toolbar__buttonstrip.float-right a").css("opacity", "1").css("cursor", "");
                         $("#webapp_nodered_username").css("border-color", borderColor);
-                    }
-                    if ($("#webapp_nodered_password").val().trim() == "") {
-                        $("#webapp_nodered_password").css("border-color", "red");
-                    }else{
                         $("#webapp_nodered_password").css("border-color", borderColor);
+                        return true;
                     }
-                    return false;
-                }else{
-                    $(".l-unit-toolbar__buttonstrip.float-right a").css("opacity", "1").css("cursor", "");
-                    $("#webapp_nodered_username").css("border-color", borderColor);
-                    $("#webapp_nodered_password").css("border-color", borderColor);
-                    return true;
-                }
-            };
+                };
 
-            // Override the form submition
-            $(".l-unit-toolbar__buttonstrip.float-right a").removeAttr("data-action").removeAttr("data-id").click(function() {
-                if ( nr_validate() ) {
-                    $(".l-sort.clearfix").html("<div class=\"l-unit-toolbar__buttonstrip\"></div><div class=\"l-unit-toolbar__buttonstrip float-right\"><div><div class=\"timer-container\" style=\"float:right;\"><div class=\"timer-button spinner\"><div class=\"spinner-inner\"></div><div class=\"spinner-mask\"></div> <div class=\"spinner-mask-two\"></div></div></div></div></div>");
-                    $("#vstobjects").submit();
-                }
+                // Override the form submition
+                $(".l-unit-toolbar__buttonstrip.float-right a").removeAttr("data-action").removeAttr("data-id").click(function() {
+                    if ( nr_validate() ) {
+                        $(".l-sort.clearfix").html("<div class=\"l-unit-toolbar__buttonstrip\"></div><div class=\"l-unit-toolbar__buttonstrip float-right\"><div><div class=\"timer-container\" style=\"float:right;\"><div class=\"timer-button spinner\"><div class=\"spinner-inner\"></div><div class=\"spinner-mask\"></div> <div class=\"spinner-mask-two\"></div></div></div></div></div>");
+                        $("#vstobjects").submit();
+                    }
+                });
+                $("#vstobjects").submit(function(e) {
+                    if ( !nr_validate() ) {
+                        e.preventDefault();
+                    }
+                });
+                $("#webapp_nodered_username").blur(nr_validate).keyup(nr_validate);
+                $("#webapp_nodered_password").blur(nr_validate).keyup(nr_validate);
+                $(".generate").click(function() {
+                    setTimeout(function() {
+                        nr_validate();
+                    }, 500)
+                });
+                nr_validate();
             });
-            $("#vstobjects").submit(function(e) {
-                if ( !nr_validate() ) {
-                    e.preventDefault();
-                }
-            });
-            $("#webapp_nodered_username").blur(nr_validate).keyup(nr_validate);
-            $("#webapp_nodered_password").blur(nr_validate).keyup(nr_validate);
-            $(".generate").click(function() {
-                setTimeout(function() {
-                    nr_validate();
-                }, 500)
-            });
-            nr_validate();
-        });
-    </script>
-    ';
+        </script>
+        ';
+    }
+    $content = str_replace( '<div class="app-form">', '<div class="app-form">' . $msg, $content );
     return $content;
 });
