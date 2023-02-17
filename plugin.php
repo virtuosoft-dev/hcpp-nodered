@@ -21,6 +21,7 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     $user = $options['user'];
     $domain = $options['domain'];
     $nodered_folder = $options['nodered_folder'];
+    $nodered_root = false;
     if ( $nodered_folder == '' || $nodered_folder[0] != '/' ) $nodered_folder = '/' . $nodered_folder;
     $nodeapp_folder = "/home/$user/web/$domain/nodeapp";
     $nodered_folder = $nodeapp_folder . $nodered_folder;
@@ -36,7 +37,8 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     // Update settings.js with our user options
     $settings = file_get_contents( $nodered_folder . '/settings.js' );
     $settings = str_replace( '%nodered_username%', $options['nodered_username'], $settings );
-    $settings = str_replace( '%nodered_password%', $options['nodered_password'], $settings );
+    $password = $options['nodered_password'];
+    $settings = str_replace( '%nodered_password%', $password, $settings );
     if ( isset( $options['projects'] ) ) {
         $settings = str_replace( '%projects%', $options['projects'], $settings );
     }else{
@@ -48,7 +50,12 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     $hcpp->nodeapp->shutdown_apps( $nodeapp_folder );
     $hcpp->nodeapp->allocate_ports( $nodeapp_folder );
     $hcpp->nodeapp->generate_nginx_files( $nodeapp_folder );
-    $hcpp->nodeapp->startup_apps( $nodeapp_folder );    
+    $hcpp->nodeapp->startup_apps( $nodeapp_folder );
+
+    // Update proxy and restart nginx
+    if ( $nodeapp_folder . '/' == $nodered_folder ) {
+        $hcpp->run( "change-web-domain-proxy-tpl $user $domain NodeApp" );
+    }
     return $args;
 });
 
