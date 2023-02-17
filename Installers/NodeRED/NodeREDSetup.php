@@ -38,7 +38,6 @@ class NodeREDSetup extends BaseSetup {
 		$parse = explode( '/', $this->getDocRoot() );
 		$options['user'] = $parse[2];
 		$options['domain'] = $parse[4];
-		$hcpp->do_action( 'nodered_install', $options );
 		$hcpp->run( 'invoke-plugin nodered_install ' . escapeshellarg( json_encode( $options ) ) );
 		return true;
 	}
