@@ -42,10 +42,14 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     $prefix = str_replace( '$2y$', '$2a$', $prefix );
     $hash = $prefix . $hcpp->delLeftMost( $hash, '$2y$' );
 
+    // Generate a random secret key
+    $secret_key = $hcpp->nodeapp->random_chars( 32 );
+
     // Update settings.js with our user options
     $settings = file_get_contents( $nodered_folder . '/settings.js' );
     $settings = str_replace( '%nodered_username%', $options['nodered_username'], $settings );
     $settings = str_replace( '%nodered_password%', $hash, $settings );
+    $settings = str_replace( '%secret_key%', $secret_key, $settings );
     if ( isset( $options['projects'] ) ) {
         $settings = str_replace( '%projects%', $options['projects'], $settings );
     }else{
