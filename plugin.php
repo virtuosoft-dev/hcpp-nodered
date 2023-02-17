@@ -69,6 +69,8 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     // Update proxy and restart nginx
     if ( $nodeapp_folder . '/' == $nodered_folder ) {
         $hcpp->run( "change-web-domain-proxy-tpl $user $domain NodeApp" );
+    }else{
+        $hcpp->run( "restart-proxy" );
     }
     return $args;
 });
