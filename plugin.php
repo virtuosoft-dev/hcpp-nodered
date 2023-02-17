@@ -34,7 +34,6 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     // Copy over nodered files
     $hcpp->nodeapp->copy_folder( __DIR__ . '/nodeapp', $nodered_folder, $user );
 
-
     // Create Node-RED compatible bcrypt hash for password
     $password = $options['nodered_password'];
     $hash = password_hash( $password, PASSWORD_BCRYPT, ["code" => 8] );
@@ -45,11 +44,15 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     // Generate a random secret key
     $secret_key = $hcpp->nodeapp->random_chars( 32 );
 
+    // Default editor and http node root to the given folder
+    $nodered_root = $hcpp->delLeftMost( $nodeapp_folder, $nodered_folder );
+
     // Update settings.js with our user options
     $settings = file_get_contents( $nodered_folder . '/settings.js' );
     $settings = str_replace( '%nodered_username%', $options['nodered_username'], $settings );
     $settings = str_replace( '%nodered_password%', $hash, $settings );
     $settings = str_replace( '%secret_key%', $secret_key, $settings );
+    $settings = str_replace( '%nodered_root%', $nodered_root, $settings );
     if ( isset( $options['projects'] ) ) {
         $settings = str_replace( '%projects%', $options['projects'], $settings );
     }else{
