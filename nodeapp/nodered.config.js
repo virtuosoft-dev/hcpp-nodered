@@ -7,7 +7,15 @@ module.exports = {
         let user = __dirname.split('/')[2];
         return [{
             name: app + '-' + domain,
-            script: __dirname + '/' + app + '.js',
+            script: (function() {
+                let file = __dirname + '/.noderedrc';
+                let ver = 'v3.0.2';
+                const fs = require('fs');
+                if (fs.existsSync(file)) {
+                    ver = fs.readFileSync(file, {encoding:'utf8', flag:'r'}).trim();
+                }
+                return '/opt/node-red/' + ver + '/node-red/red.js';
+            })(),
             cwd: __dirname,
             interpreter: (function() {
                 /**
