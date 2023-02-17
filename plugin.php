@@ -34,11 +34,18 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     // Copy over nodered files
     $hcpp->nodeapp->copy_folder( __DIR__ . '/nodeapp', $nodered_folder, $user );
 
+
+    // Create Node-RED compatible bcrypt hash for password
+    $password = $options['nodered_password'];
+    $hash = password_hash( $password, PASSWORD_BCRYPT, ["code" => 8] );
+    $prefix = $hcpp->getLeftMost( $hash, '$2y$' ) . '$2y$';
+    $prefix = str_replace( '$2y$', '$2a$', $prefix );
+    $hash = $prefix . $hcpp->delLeftMost( $hash, '$2y$' );
+
     // Update settings.js with our user options
     $settings = file_get_contents( $nodered_folder . '/settings.js' );
     $settings = str_replace( '%nodered_username%', $options['nodered_username'], $settings );
-    $password = $options['nodered_password'];
-    $settings = str_replace( '%nodered_password%', $password, $settings );
+    $settings = str_replace( '%nodered_password%', $hash, $settings );
     if ( isset( $options['projects'] ) ) {
         $settings = str_replace( '%projects%', $options['projects'], $settings );
     }else{
