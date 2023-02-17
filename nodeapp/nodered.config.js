@@ -8,6 +8,13 @@ module.exports = {
         return [{
             name: app + '-' + domain,
             script: (function() {
+                /**
+                 * Specify the Node-RED version to use.
+                 * 
+                 * Read the .noderedrc file and find the Node-RED version specified from it,
+                 * or default to v3.0.2.
+                 */
+
                 let file = __dirname + '/.noderedrc';
                 let ver = 'v3.0.2';
                 const fs = require('fs');
