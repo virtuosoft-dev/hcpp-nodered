@@ -45,7 +45,7 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     $secret_key = $hcpp->nodeapp->random_chars( 32 );
 
     // Default editor and http node root to the given folder
-    $nodered_root = $hcpp->delLeftMost( $nodeapp_folder, $nodered_folder );
+    $nodered_root = $hcpp->delLeftMost( $nodered_folder, $nodeapp_folder );
 
     // Update settings.js with our user options
     $settings = file_get_contents( $nodered_folder . '/settings.js' );
