@@ -32,9 +32,7 @@ git clone https://github.com/steveorevo/hestiacp-nodered nodered
 ```
 
 
-Be sure to logout and login again to your Hestia Control Panel; the plugin will immediately start installing NodeJS depedencies in the background. 
-
-Be sure to logout and login again to your Hestia Control Panel; the plugin will immediately start installing NodeJS and Node-RED depedencies in the background. A notification will appear under the admin user account indicating *"Node-RED plugin has finished installing"* when complete. This may take awhile before the options appear in Hestia. You can force manual installation via root level SSH:
+Be sure to logout and login again to your Hestia Control Panel; the plugin will immediately start installing Node-RED depedencies in the background. A notification will appear under the admin user account indicating *"Node-RED plugin has finished installing"* when complete. This may take awhile before the options appear in Hestia. You can force manual installation via root level SSH:
 
 ```
 sudo -s
