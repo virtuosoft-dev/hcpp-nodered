@@ -76,10 +76,11 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
 });
 
 // Custom install page
-$hcpp->add_action( 'render_page_body_WEB_setup_webapp', function( $content ) {
+$hcpp->add_action( 'render_page', function( $args ) {
     global $hcpp;
-    if ( strpos( $_SERVER['REQUEST_URI'], '/add/webapp/?app=NodeRED&' ) === false ) return $content;
-
+    if ( strpos( $_SERVER['REQUEST_URI'], '/add/webapp/?app=NodeRED&' ) === false ) return $args;
+    $content = $args['content'];
+    
     // Suppress Data loss alert, and PHP version selector
     $content = '<style>.form-group:last-of-type,.alert.alert-info.alert-with-icon{display:none;}</style>' . $content;
 
@@ -152,5 +153,6 @@ $hcpp->add_action( 'render_page_body_WEB_setup_webapp', function( $content ) {
         ';
     }
     $content = str_replace( '<div class="app-form">', '<div class="app-form">' . $msg, $content );
-    return $content;
+    $args['content'] = $content;
+    return $args;
 });
