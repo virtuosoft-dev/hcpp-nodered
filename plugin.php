@@ -69,6 +69,7 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
         $hcpp->run( "change-web-domain-proxy-tpl $user $domain NodeApp" );
     }else{
         $hcpp->nodeapp->generate_nginx_files( $nodeapp_folder );
+        $hcpp->nodeapp->startup_apps( $nodeapp_folder );
         $hcpp->run( "restart-proxy" );
     }
     return $args;
