@@ -32,7 +32,7 @@ $hcpp->add_action( 'invoke_plugin', function( $args ) {
     shell_exec( $cmd );
 
     // Copy over nodered files
-    $hcpp->nodeapp->copy_folder( __DIR__ . '/nodeapp', $nodered_folder, $user );
+    $hcpp->copy_folder( __DIR__ . '/nodeapp', $nodered_folder, $user );
 
     // Create Node-RED compatible bcrypt hash for password
     $password = $options['nodered_password'];
