@@ -12,25 +12,14 @@ First, switch to root user:
 sudo -s
 ```
 
-You can just download the archive, unpack, and move it into place:
-
-```
-cd /tmp
-wget https://github.com/Steveorevo/hestiacp-nodered/archive/refs/heads/main.zip
-unzip main.zip
-mv hestiacp-nodered-main /usr/local/hestia/plugins/nodered
-rm main.zip
-```
-
-Note: It is important that the plugin folder name is `nodered`.
-
-Alternatively (instead of the commands above), you can just clone the repo:
+Then simply clone the repo to your plugins folder, with the name `nodered`:
 
 ```
 cd /usr/local/hestia/plugins
 git clone https://github.com/steveorevo/hestiacp-nodered nodered
 ```
 
+Note: It is important that the destination plugin folder name is `nodered`.
 
 Be sure to logout and login again to your Hestia Control Panel; the plugin will immediately start installing Node-RED depedencies in the background. A notification will appear under the admin user account indicating *"Node-RED plugin has finished installing"* when complete. This may take awhile before the options appear in Hestia. You can force manual installation via root level SSH:
 
