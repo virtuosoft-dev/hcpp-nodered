@@ -85,7 +85,7 @@ $hcpp->add_action( 'render_page', function( $args ) {
 
     // Suppress Data loss alert, and PHP version selector
     $content = '<style>.form-group:last-of-type,.alert.alert-info.alert-with-icon{display:none;}</style>' . $content;
-    if ( $shell != '/bin/bash' ) {
+    if ( $shell != 'bash' ) {
 
         // Display bash requirement
         $content = '<style>.form-group{display:none;}</style>' . $content;
