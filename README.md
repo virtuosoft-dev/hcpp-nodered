@@ -1,5 +1,5 @@
 # hestiacp-nodered
-A plugin for Hestia Control Panel (via [hestiacp-pluginable](https://github.com/steveorevo/hestiacp-pluginable)) that enables hosting a Node-RED instance. With this plugin installed, user accounts can host their own Node-RED instance either in the root domain or as a subfolder installation. For instance, it is possible to run WordPress in the root domain while having Node-RED installed on the same domain in a subfolder (i.e. https://example.com/nodered); a perfect setup for creating solutions using [WPN](https://github.com/steveorevo/wpn). 
+A plugin for Hestia Control Panel (via [hestiacp-pluginable](https://github.com/steveorevo/hestiacp-pluginable)) that enables hosting a Node-RED instance. With this plugin installed, a new Quick Installer option will appear. User accounts can host their own Node-RED instance either in the root domain or as a subfolder installation. For instance, it is possible to run WordPress in the root domain while having Node-RED installed on the same domain in a subfolder (i.e. https://example.com/nodered); a perfect setup for creating solutions using [WPN](https://github.com/steveorevo/wpn). 
 
 &nbsp;
 > :warning: !!! Note: this repo is in progress; when completed, a release will appear in the release tab.
