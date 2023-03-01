@@ -3,7 +3,7 @@ module.exports = {
         const fs = require('fs');
 
         // Load default PM2 compatible nodeapp configuration.
-        let nodeapp = [require('/usr/local/hestia/plugins/nodeapp/nodeapp.js')(__filename)];
+        let nodeapp = require('/usr/local/hestia/plugins/nodeapp/nodeapp.js')(__filename);
 
         /**
          * Specify the Node-RED version to use.
@@ -18,6 +18,6 @@ module.exports = {
         }
         nodeapp.script = '/opt/node-red/' + ver + '/node-red/red.js';
         nodeapp.args += ' -u ' + __dirname;
-        return nodeapp;
+        return [nodeapp];
     })()
 }
