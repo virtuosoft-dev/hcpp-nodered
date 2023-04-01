@@ -88,7 +88,8 @@ if ( ! class_exists( 'NodeRED' ) ) {
         // Custom install page
         public function render_page( $args ) {
             global $hcpp;
-            if ( strpos( $_SERVER['REQUEST_URI'], '/add/webapp/?app=NodeRED&' ) === false ) return $args;
+            if ( $args['page'] !== 'setup_webapp') return $args;
+            if ( strpos( $_SERVER['REQUEST_URI'], '?app=NodeRED' ) === false ) return $args;
             $content = $args['content'];
             $user = trim($args['user'], "'");
             $shell = $hcpp->run( "list-user $user json")[$user]['SHELL'];
@@ -170,7 +171,11 @@ if ( ! class_exists( 'NodeRED' ) ) {
                 </script>
                 ';
             }
-            $content = str_replace( '<div class="app-form">', '<div class="app-form">' . $msg, $content );
+            if ( strpos( '<div class="app-form">', $content ) !== false ) {
+                $content = str_replace( '<div class="app-form">', '<div class="app-form">' . $msg, $content ); // Hestia 1.6.X
+            }else{
+                $content = str_replace( '<h1 ', $msg . '<h1 style="padding-bottom:0;" ', $content ); // Hestia 1.7.X
+            }
             $args['content'] = $content;
             return $args;
         }
