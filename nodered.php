@@ -122,7 +122,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
                 // Enforce username and password, remove PHP version
                 $msg .= '
                 <script>
-                    $(function() {
+                    document.addEventListener("DOMContentLoaded", function() { 
                         let borderColor = $("#webapp_nodered_username").css("border-color");
                         let toolbar = $(".l-center.edit").html();
                         function nr_validate() {
