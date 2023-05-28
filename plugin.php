@@ -1,8 +1,10 @@
 <?php
 /**
  * Plugin Name: NodeRED
- * Plugin URI: https://github.com/steveorevo/hestiacp-nodered
+ * Plugin URI: https://github.com/virtuosoft-dev/hcpp-nodered
  * Description: NodeRED is a plugin for HestiaCP that allows you to Quick Install a Node-RED instance.
+ * Version: 1.0.0
+ * 
  */
 
 // Register the install and uninstall scripts
