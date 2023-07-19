@@ -17,7 +17,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
         public function __construct() {
             global $hcpp;
             $hcpp->nodered = $this;
-            $hcpp->add_action( 'invoke_plugin', array( $this, 'setup' ) );
+            $hcpp->add_action( 'hcpp_invoke_plugin', array( $this, 'setup' ) );
             $hcpp->add_action( 'render_page', array( $this, 'render_page' ) );
         }
 
