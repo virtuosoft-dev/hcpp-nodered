@@ -18,7 +18,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
             global $hcpp;
             $hcpp->nodered = $this;
             $hcpp->add_action( 'hcpp_invoke_plugin', array( $this, 'setup' ) );
-            $hcpp->add_action( 'hcpp_render_page', array( $this, 'hcpp_render_page' ) );
+            $hcpp->add_action( 'hcpp_render_body', array( $this, 'hcpp_render_body' ) );
         }
 
         // Install Node-RED based on the given user options
@@ -86,7 +86,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
         }
 
         // Custom install page
-        public function hcpp_render_page( $args ) {
+        public function hcpp_render_body( $args ) {
             global $hcpp;
             if ( $args['page'] !== 'setup_webapp') return $args;
             if ( strpos( $_SERVER['REQUEST_URI'], '?app=NodeRED' ) === false ) return $args;
