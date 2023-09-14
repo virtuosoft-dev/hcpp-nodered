@@ -9,12 +9,8 @@ dir=$PWD
 if [ ! -d "/opt/node-red" ]; then
 
     mkdir -p /opt/node-red
-    cd /tmp
-    wget https://github.com/node-red/node-red/releases/download/3.0.2/node-red-3.0.2.zip
-    unzip node-red-3.0.2.zip -d /opt/node-red/v3.0.2
-    rm node-red-3.0.2.zip
-    cd /opt/node-red/v3.0.2/node-red
-    npm install
+    npm install -g --unsafe-perm node-red@3.0.2 --prefix /opt/node-red/v3.0.2
+    npm install -g --unsafe-perm node-red@3.1.0 --prefix /opt/node-red/v3.1.0
 
 fi
 

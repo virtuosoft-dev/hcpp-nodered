@@ -16,7 +16,7 @@ module.exports = {
         if (fs.existsSync(file)) {
             ver = fs.readFileSync(file, {encoding:'utf8', flag:'r'}).trim();
         }
-        nodeapp.script = '/opt/node-red/' + ver + '/node-red/red.js';
+        nodeapp.script = '/opt/node-red/' + ver + '/bin/node-red';
         nodeapp.args += ' -u ' + __dirname;
         return [nodeapp];
     })()
