@@ -9,10 +9,10 @@ module.exports = {
          * Specify the Node-RED version to use.
          * 
          * Read the .noderedrc file and find the Node-RED version specified from it,
-         * or default to v3.0.2.
+         * or default to v3.1.0.
          */
         let file = __dirname + '/.noderedrc';
-        let ver = 'v3.0.2';
+        let ver = 'v3.1.0';
         if (fs.existsSync(file)) {
             ver = fs.readFileSync(file, {encoding:'utf8', flag:'r'}).trim();
         }
