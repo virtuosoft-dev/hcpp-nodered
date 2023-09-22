@@ -31,7 +31,6 @@ if ( ! class_exists( 'NodeRED' ) ) {
             $user = $options['user'];
             $domain = $options['domain'];
             $nodered_folder = $options['nodered_folder'];
-            $nodered_root = false;
             if ( $nodered_folder == '' || $nodered_folder[0] != '/' ) $nodered_folder = '/' . $nodered_folder;
             $nodeapp_folder = "/home/$user/web/$domain/nodeapp";
             $nodered_folder = $nodeapp_folder . $nodered_folder;
