@@ -113,7 +113,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
         
                 // Display install information
                 $msg = '<div style="margin-top:-20px;width:75%;"><span>';
-                $msg .= 'The Node-RED framework lives inside the "nodeapp" folder (adjacent to "public_html"). ';
+                $msg .= 'The Node-RED instance lives inside the "nodeapp" folder (adjacent to "public_html"). ';
                 $msg .= 'It can be a standalone instance in the domain root, or in a subfolder using the ';
                 $msg .= '<b>Install Directory</b> field below.</span> The specified <b>Install Directory</b> must be non-existent or empty.<br><br>';
                 
