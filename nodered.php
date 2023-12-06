@@ -36,7 +36,8 @@ if ( ! class_exists( 'NodeRED' ) ) {
             $nodered_folder = $nodeapp_folder . $nodered_folder;
         
             // Create the nodeapp folder 
-            $cmd = "mkdir -p " . escapeshellarg( $nodered_folder ) . " && ";
+            $cmd = "mkdir -p " . escapeshellarg( $nodered_folder ) . " ; ";
+            $cmd .= "chmod 751 " . escapeshellarg( $nodeapp_folder ) . " && ";
             $cmd .= "chown -R $user:$user " . escapeshellarg( $nodeapp_folder );
             shell_exec( $cmd );
         
