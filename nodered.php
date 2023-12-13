@@ -37,12 +37,12 @@ if ( ! class_exists( 'NodeRED' ) ) {
         
             // Create the nodeapp folder 
             $cmd = "mkdir -p " . escapeshellarg( $nodered_folder ) . " ; ";
-            $cmd .= "chmod 751 " . escapeshellarg( $nodeapp_folder ) . " && ";
             $cmd .= "chown -R $user:$user " . escapeshellarg( $nodeapp_folder );
             shell_exec( $cmd );
         
             // Copy over nodered files
             $hcpp->copy_folder( __DIR__ . '/nodeapp', $nodered_folder, $user );
+            chmod( $nodeapp_folder, 0751 );
         
             // Create Node-RED compatible bcrypt hash for password
             $password = $options['nodered_password'];
