@@ -9,7 +9,7 @@ class NodeREDSetup extends BaseSetup {
 		"name" => "NodeRED",
 		"group" => "framework",
 		"enabled" => true,
-		"version" => "4.0.2",
+		"version" => "4.0.8",
 		"thumbnail" => "nr-thumb.png",
 	];
 

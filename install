@@ -9,7 +9,7 @@ dir=$PWD
 if [ ! -d "/opt/node-red" ]; then
 
     mkdir -p /opt/node-red
-    npm install -g --unsafe-perm node-red@4.0.2 --prefix /opt/node-red/v4.0.2
+    npm install -g --unsafe-perm node-red@4.0.8 --prefix /opt/node-red/v4.0.8
 
 fi
 
