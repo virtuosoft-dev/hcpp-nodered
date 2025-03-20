@@ -1,9 +1,4 @@
 #!/bin/bash
-
-############################################
-# Uninstall Node-RED
-############################################
-rm -rf /opt/node-red
-
-# Remove Quick Install App
+export DEBIAN_FRONTEND=noninteractive
+/usr/local/hestia/bin/v-invoke-plugin nodered_uninstall
 rm -rf /usr/local/hestia/web/src/app/WebApp/Installers/NodeRED
