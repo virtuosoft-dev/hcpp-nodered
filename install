@@ -1,21 +1,14 @@
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
+dir=$PWD
 
 ############################################
 # Install Node-RED
 ############################################
-
-dir=$PWD
-if [ ! -d "/opt/node-red" ]; then
-
-    mkdir -p /opt/node-red
-    npm install -g --unsafe-perm node-red@4.0.8 --prefix /opt/node-red/v4.0.8
-
-fi
-
 # Copy over our Quick Install App
 cd $dir
 rsync -r ./Installers/ /usr/local/hestia/web/src/app/WebApp/Installers/
+/usr/local/hestia/bin/v-invoke-plugin nodered_install
 
 # Notify installation has finished
 /usr/local/hestia/bin/v-add-user-notification admin "Node-RED" "&#128571; Node-RED plugin has finished installing."

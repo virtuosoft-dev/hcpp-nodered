@@ -76,8 +76,8 @@ module.exports = {
         adminAuth: {
            type: "credentials",
            users: [{
-               username: "%nodered_username%",
-               password: "%nodered_password%",
+               username: "%nodeRED_username%",
+               password: "%nodeRED_password%",
                permissions: "*"
            }]
         },

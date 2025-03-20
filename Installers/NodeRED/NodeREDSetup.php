@@ -2,23 +2,30 @@
 
 namespace Hestia\WebApp\Installers\NodeRED;
 use Hestia\WebApp\Installers\BaseSetup as BaseSetup;
-require_once( '/usr/local/hestia/web/pluginable.php' );
 
 class NodeREDSetup extends BaseSetup {
 	protected $appInfo = [
 		"name" => "NodeRED",
 		"group" => "framework",
 		"enabled" => true,
-		"version" => "4.0.8",
+		"version" => "latest",
 		"thumbnail" => "nr-thumb.png",
 	];
 
 	protected $appname = "nodered";
 	protected $config = [
 		"form" => [
-			"nodered_username" => ["value" => "nradmin"],
-			"nodered_password" => "password",
 			"nodered_folder" => ["type" => "text", "value" => "", "placeholder" => "/", "label" => "Install Directory"],
+			"nodeJS_version" => [
+				"type" => "select",
+				"options" => [
+					"v18: LTS Hydrogen",
+					"v20: LTS Iron",
+					"v22: LTS Jod",
+				],
+			],
+			"nodeRED_username" => ["value" => "nradmin"],
+			"nodeRED_password" => "password",
 			"projects" => ["type" => "boolean", "value" => false, "label" => "Enable Git Projects"],
 		],
 		"database" => false,
@@ -38,7 +45,7 @@ class NodeREDSetup extends BaseSetup {
 		$parse = explode( '/', $this->getDocRoot() );
 		$options['user'] = $parse[2];
 		$options['domain'] = $parse[4];
-		$hcpp->run( 'invoke-plugin nodered_install ' . escapeshellarg( json_encode( $options ) ) );
+		$hcpp->run( 'v-invoke-plugin nodered_setup ' . escapeshellarg( json_encode( $options ) ) );
 		return true;
 	}
 }
