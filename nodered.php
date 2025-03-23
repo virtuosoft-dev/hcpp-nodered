@@ -14,7 +14,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
         public $supported = ['18','19','20','21','22'];
 
         /**
-         * Customize Node-RED install screen
+         * Customize Node-RED install screen.
          */ 
         public function hcpp_add_webapp_xpath( $xpath ) {
             if ( ! (isset( $_GET['app'] ) && $_GET['app'] == 'NodeRED' ) ) return $xpath;
@@ -94,7 +94,6 @@ if ( ! class_exists( 'NodeRED' ) ) {
                         $current_pkg = trim( $hcpp->delLeftMost( $parse . '@', '@' ) );
                         $current_pkg = $hcpp->getLeftMost( $current_pkg, "\n" );
 
-
                         // Check if node-red is missing or outdated
                         if ( $current_pkg !== $latest_pkg ) {
                             $majors[] = $major;
@@ -104,14 +103,14 @@ if ( ! class_exists( 'NodeRED' ) ) {
 
                 // Install Node-RED on supported NodeJS versions
                 if ( count( $majors ) > 0 ) {
-                    $hcpp->nodeapp->do_maintenance( $majors, function( $stopped ) use( $hcpp, $majors ) {
+                    $hcpp->nodeapp->do_maintenance( function( $stopped ) use( $hcpp, $majors ) {
                         foreach( $majors as $major ) {
                             $cmd = "nvm use $major && ";
                             $cmd .= '(npm list -g node-red || npm install -g --unsafe-perm node-red --no-interactive) ';
                             $cmd .= '&& npm update -g node-red --no-interactive < /dev/null';
                             $hcpp->runuser( '', $cmd );
                         }
-                    });
+                    }, $majors);
                 }
             }
             
@@ -129,12 +128,12 @@ if ( ! class_exists( 'NodeRED' ) ) {
                 }
 
                 // Uninstall Node-RED on supported NodeJS versions
-                $hcpp->nodeapp->do_maintenance( $this->supported, function( $stopped ) use( $hcpp, $majors ) {
+                $hcpp->nodeapp->do_maintenance( function( $stopped ) use( $hcpp, $majors ) {
                     foreach( $majors as $major ) {
                         $cmd = "nvm use $major && npm uninstall -g node-red --no-interactive";
                         $hcpp->runuser( '', $cmd );
                     }
-                });
+                }, $this->supported);
             }
 
             // Setup Node-RED with the supported NodeJS on the given domain 
@@ -202,7 +201,18 @@ if ( ! class_exists( 'NodeRED' ) ) {
                 $hcpp->run( "v-restart-proxy" );
             }
             return $args;
-        }      
+        }
+
+        /**
+         * Check daily for Node-RED updates and install them.
+         */
+        public function v_update_sys_queue( $args ) {
+            global $hcpp;
+            if ( ! (isset( $args[0] ) && trim( $args[0] ) == 'daily') ) return $args;
+            if ( strpos( $hcpp->run('v-list-sys-hestia-autoupdate'), 'Enabled') == false ) return $args;
+            $hcpp->run( 'v-invoke-plugin nodered_install' );
+            return $args;
+        }
 
     }
     global $hcpp;
