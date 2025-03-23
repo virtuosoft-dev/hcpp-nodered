@@ -93,6 +93,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
                         $latest_pkg = $hcpp->getLeftMost( $latest_pkg, "\n" );
                         $current_pkg = trim( $hcpp->delLeftMost( $parse . '@', '@' ) );
                         $current_pkg = $hcpp->getLeftMost( $current_pkg, "\n" );
+                        $hcpp->log( "Node-RED on v$major: $current_pkg -> $latest_pkg" );
 
                         // Check if node-red is missing or outdated
                         if ( $current_pkg !== $latest_pkg ) {
@@ -206,12 +207,9 @@ if ( ! class_exists( 'NodeRED' ) ) {
         /**
          * Check daily for Node-RED updates and install them.
          */
-        public function v_update_sys_queue( $args ) {
+        public function nodeapp_autoupdate() {
             global $hcpp;
-            if ( ! (isset( $args[0] ) && trim( $args[0] ) == 'daily') ) return $args;
-            if ( strpos( $hcpp->run('v-list-sys-hestia-autoupdate'), 'Enabled') == false ) return $args;
             $hcpp->run( 'v-invoke-plugin nodered_install' );
-            return $args;
         }
 
     }
