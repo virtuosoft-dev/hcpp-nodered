@@ -2,11 +2,11 @@
 A plugin for Hestia Control Panel (via [hestiacp-pluginable](https://github.com/virtuosoft-dev/hestiacp-pluginable) and [hcpp-nodeapp](https://github.com/virtuosoft-dev/hcpp-nodeapp)) that enables hosting a Node-RED instance. With this plugin installed, a new Quick Installer option will appear. *[Note: User account must have SSH/bash set per NodeApp's instructions for this plugin to work](https://github.com/virtuosoft-dev/hcpp-nodeapp#using-nodeapp-to-host-a-nodejs-website)*. should have User accounts can host their own Node-RED instance either in the root domain or as a subfolder installation. For instance, it is possible to run WordPress in the root domain while having Node-RED installed on the same domain in a subfolder (i.e. https://example.com/nodered); a perfect setup for creating solutions using [WPN](https://virtuosoft.com/wpn).
 
 ## Installation
-HCPP-NodeRED requires an Ubuntu or Debian based installation of [Hestia Control Panel](https://hestiacp.com) in addition to an installation of [HestiaCP-Pluginable](https://github.com/virtuosoft-dev/hestiacp-pluginable) *and* [HCPP-NodeApp](https://github.com/virtuosoft-dev/hcpp-nodeapp) to function; please ensure that you have first installed pluginable on your Hestia Control Panel before proceeding. Clone the latest release version (i.e. replace **v2.0.0** below with the latest release version) to the nodered folder:
+HCPP-NodeRED requires an Ubuntu or Debian based installation of [Hestia Control Panel](https://hestiacp.com) in addition to an installation of [HestiaCP-Pluginable](https://github.com/virtuosoft-dev/hestiacp-pluginable) *and* [HCPP-NodeApp](https://github.com/virtuosoft-dev/hcpp-nodeapp) to function; please ensure that you have first installed pluginable on your Hestia Control Panel before proceeding. Clone the latest release version (i.e. replace **v2.1.0** below with the latest release version) to the nodered folder:
 
 ```
 cd /usr/local/hestia/plugins
-sudo git clone --branch v2.0.0 https://github.com/virtuosoft-dev/hcpp-nodered nodered
+sudo git clone --branch v2.1.0 https://github.com/virtuosoft-dev/hcpp-nodered nodered
 ```
 
 Note: It is important that the destination plugin folder name is `nodered`.
