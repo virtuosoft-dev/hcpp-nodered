@@ -36,7 +36,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
             if ($_SESSION["look"] != "") {
                 $user = $_SESSION["look"];
             }
-            $domain = $_GET['domain'];
+            $domain = isset( $_GET['domain'] ) ? $_GET['domain'] : '';
             $domain = preg_replace('/[^a-zA-Z0-9\.\-]/', '', $domain);
             $shell = $hcpp->run( "v-list-user $user json")[$user]['SHELL'];
             if ( $shell != 'bash' ) {
@@ -82,7 +82,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
          * is used by the webapp installer.
          */
         public function hcpp_invoke_plugin( $args ) {
-            if ( count( $args ) < 0 ) return $args;
+            if ( count( $args ) < 1 ) return $args;
             global $hcpp;
             
             // Install Node-RED on supported NodeJS versions
@@ -115,6 +115,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
                 }
 
                 // Install Node-RED on supported NodeJS versions
+                $majors = array_values( array_unique( $majors ) );
                 if ( count( $majors ) > 0 ) {
                     $supported = $this->supported;
                     $hcpp->nodeapp->do_maintenance( function( $stopped ) use( $hcpp, $majors, $supported ) {
@@ -122,7 +123,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
 
                             // Install or update to the newest Node-RED compatible with this NodeJS major
                             $tag = $supported[$major];
-                            $cmd = "nvm use $major && npm install -g node-red@$tag --no-interactive < /dev/null";
+                            $cmd = "nvm use $major && npm install -g node-red@$tag < /dev/null";
                             $hcpp->runuser( '', $cmd );
                         }
                     }, $majors);
@@ -141,14 +142,17 @@ if ( ! class_exists( 'NodeRED' ) ) {
                         $majors[] = $major;
                     }
                 }
+                $majors = array_values( array_unique( $majors ) );
 
                 // Uninstall Node-RED on supported NodeJS versions
-                $hcpp->nodeapp->do_maintenance( function( $stopped ) use( $hcpp, $majors ) {
-                    foreach( $majors as $major ) {
-                        $cmd = "nvm use $major && npm uninstall -g node-red --no-interactive";
-                        $hcpp->runuser( '', $cmd );
-                    }
-                }, array_keys( $this->supported ) );
+                if ( count( $majors ) > 0 ) {
+                    $hcpp->nodeapp->do_maintenance( function( $stopped ) use( $hcpp, $majors ) {
+                        foreach( $majors as $major ) {
+                            $cmd = "nvm use $major && npm uninstall -g node-red < /dev/null";
+                            $hcpp->runuser( '', $cmd );
+                        }
+                    }, $majors );
+                }
             }
 
             // Setup Node-RED with the supported NodeJS on the given domain 
@@ -158,14 +162,19 @@ if ( ! class_exists( 'NodeRED' ) ) {
                 $user = $options['user'];
                 $domain = $options['domain'];
                 $nodejs_version = trim( $hcpp->getLeftMost( $options['nodeJS_version'], ':' ), "v \t\n\r\0\x0B" );
-                $nodered_folder = $options['nodered_folder'];
+
+                // Restrict install directory to safe path characters and prevent traversal
+                $nodered_folder = preg_replace( '/[^a-zA-Z0-9\/\-_]/', '', $options['nodered_folder'] );
+                $nodered_folder = str_replace( '..', '', $nodered_folder );
                 if ( $nodered_folder == '' || $nodered_folder[0] != '/' ) $nodered_folder = '/' . $nodered_folder;
                 $nodeapp_folder = "/home/$user/web/$domain/nodeapp";
-                
+
                 // Create parent nodeapp folder first this way to avoid CLI permissions issues
-                mkdir( $nodeapp_folder, 0755, true );
-                chown( $nodeapp_folder, $user );
-                chgrp( $nodeapp_folder, $user );
+                if ( ! is_dir( $nodeapp_folder ) ) {
+                    mkdir( $nodeapp_folder, 0755, true );
+                    chown( $nodeapp_folder, $user );
+                    chgrp( $nodeapp_folder, $user );
+                }
                 $nodered_folder = $nodeapp_folder . $nodered_folder;
                 $nodered_root = $hcpp->delLeftMost( $nodered_folder, $nodeapp_folder ); 
                 $hcpp->runuser( $user, "mkdir -p $nodered_folder" );
@@ -179,7 +188,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
 
                 // Create Node-RED compatible bcrypt hash for password
                 $password = $options['nodeRED_password'];
-                $hash = password_hash( $password, PASSWORD_BCRYPT, ["code" => 8] );
+                $hash = password_hash( $password, PASSWORD_BCRYPT, ["cost" => 10] );
                 $prefix = $hcpp->getLeftMost( $hash, '$2y$' ) . '$2y$';
                 $prefix = str_replace( '$2y$', '$2a$', $prefix );
                 $hash = $prefix . $hcpp->delLeftMost( $hash, '$2y$' );
@@ -189,7 +198,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
            
                 // Update settings.js with our user options
                 $settings = file_get_contents( $nodered_folder . '/settings.js' );
-                $settings = str_replace( '%nodeRED_username%', $options['nodeRED_username'], $settings );
+                $settings = str_replace( '"%nodeRED_username%"', json_encode( (string) $options['nodeRED_username'] ), $settings );
                 $settings = str_replace( '%nodeRED_password%', $hash, $settings );
                 $settings = str_replace( '%secret_key%', $secret_key, $settings );
                 $settings = str_replace( '%nodered_root%', $nodered_root, $settings );
