@@ -6,7 +6,7 @@ HCPP-NodeRED requires an Ubuntu or Debian based installation of [Hestia Control 
 
 ```
 cd /usr/local/hestia/plugins
-sudo git clone --branch v2.1.0 https://github.com/virtuosoft-dev/hcpp-nodered nodered
+sudo git clone --branch v2.2.0 https://github.com/virtuosoft-dev/hcpp-nodered nodered
 ```
 
 Note: It is important that the destination plugin folder name is `nodered`.
