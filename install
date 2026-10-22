@@ -10,5 +10,12 @@ cd $dir
 rsync -r ./Installers/ /usr/local/hestia/web/src/app/WebApp/Installers/
 /usr/local/hestia/bin/v-invoke-plugin nodered_install
 
-# Notify installation has finished
-/usr/local/hestia/bin/v-add-user-notification admin "Node-RED" "&#128571; Node-RED plugin has finished installing."
+# Notify the admin (username is customizable); prefer ROOT_USER, else the first user with the admin role
+ADMIN_USER=$(source /usr/local/hestia/conf/hestia.conf 2>/dev/null; echo "$ROOT_USER")
+if [[ -z "$ADMIN_USER" ]]; then
+    ADMIN_CONF=$(grep -l "^ROLE='admin'" /usr/local/hestia/data/users/*/user.conf 2>/dev/null | head -n 1 || true)
+    [[ -n "$ADMIN_CONF" ]] && ADMIN_USER=$(basename "$(dirname "$ADMIN_CONF")")
+fi
+if [[ -n "$ADMIN_USER" ]]; then
+    /usr/local/hestia/bin/v-add-user-notification "$ADMIN_USER" "Node-RED" "&#128571; Node-RED plugin has finished installing."
+fi
