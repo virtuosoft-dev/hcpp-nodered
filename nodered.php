@@ -11,7 +11,18 @@
 
 if ( ! class_exists( 'NodeRED' ) ) {
     class NodeRED extends HCPP_Hooks {
-        public $supported = ['18','19','20','21','22'];
+        // Node-RED dist-tag per supported NodeJS major; Node-RED 5.x requires NodeJS >= 22.9
+        public $supported = [
+            '18' => 'v4-maintenance',
+            '19' => 'v4-maintenance',
+            '20' => 'v4-maintenance',
+            '21' => 'v4-maintenance',
+            '22' => 'latest',
+            '23' => 'latest',
+            '24' => 'latest',
+            '25' => 'latest',
+            '26' => 'latest'
+        ];
 
         /**
          * Customize Node-RED install screen.
@@ -85,8 +96,9 @@ if ( ! class_exists( 'NodeRED' ) ) {
                     $major = $hcpp->getLeftMost( $ver['installed'], '.' );
 
                     // Check for supported version
-                    if ( in_array( $major, $this->supported ) ) {
-                        $cmd = 'nvm use ' . $major . ' && echo "~" && npm show node-red version --no-color && ';
+                    if ( isset( $this->supported[$major] ) ) {
+                        $tag = $this->supported[$major];
+                        $cmd = 'nvm use ' . $major . ' && echo "~" && npm show node-red@' . $tag . ' version --no-color && ';
                         $cmd .= 'npm list -g node-red --depth=0 --no-color';
                         $parse  = $hcpp->runuser('', $cmd );
                         $latest_pkg = trim( $hcpp->delLeftMost( $parse, '~' ) );
@@ -104,11 +116,13 @@ if ( ! class_exists( 'NodeRED' ) ) {
 
                 // Install Node-RED on supported NodeJS versions
                 if ( count( $majors ) > 0 ) {
-                    $hcpp->nodeapp->do_maintenance( function( $stopped ) use( $hcpp, $majors ) {
+                    $supported = $this->supported;
+                    $hcpp->nodeapp->do_maintenance( function( $stopped ) use( $hcpp, $majors, $supported ) {
                         foreach( $majors as $major ) {
-                            $cmd = "nvm use $major && ";
-                            $cmd .= '(npm list -g node-red || npm install -g --unsafe-perm node-red --no-interactive) ';
-                            $cmd .= '&& npm update -g node-red --no-interactive < /dev/null';
+
+                            // Install or update to the newest Node-RED compatible with this NodeJS major
+                            $tag = $supported[$major];
+                            $cmd = "nvm use $major && npm install -g node-red@$tag --no-interactive < /dev/null";
                             $hcpp->runuser( '', $cmd );
                         }
                     }, $majors);
@@ -123,7 +137,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
                 $majors = [];
                 foreach( $versions as $ver ) {
                     $major = $hcpp->getLeftMost( $ver['installed'], '.' );
-                    if ( in_array( $major, $this->supported ) ) {
+                    if ( isset( $this->supported[$major] ) ) {
                         $majors[] = $major;
                     }
                 }
@@ -134,7 +148,7 @@ if ( ! class_exists( 'NodeRED' ) ) {
                         $cmd = "nvm use $major && npm uninstall -g node-red --no-interactive";
                         $hcpp->runuser( '', $cmd );
                     }
-                }, $this->supported);
+                }, array_keys( $this->supported ) );
             }
 
             // Setup Node-RED with the supported NodeJS on the given domain 

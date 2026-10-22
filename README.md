@@ -11,6 +11,8 @@ sudo git clone --branch v2.1.0 https://github.com/virtuosoft-dev/hcpp-nodered no
 
 Note: It is important that the destination plugin folder name is `nodered`.
 
+Node-RED 5.x requires NodeJS v22.9 or newer; new instances can be created with NodeJS v22 or v24. Existing instances on older NodeJS versions (v18 - v21) remain on and continue to receive updates from the Node-RED 4.x maintenance line.
+
 Be sure to logout and login again to your Hestia Control Panel as the admin user or, as admin, visit Server (gear icon) -> Configure -> Plugins -> Save; the plugin will immediately start installing depedencies in the background. 
 
 A notification will appear under the admin user account indicating *"Node-RED plugin has finished installing"* when complete. This may take awhile before the options appear in Hestia. You can force manual installation via:

@@ -19,8 +19,7 @@ class NodeREDSetup extends BaseSetup {
 			"nodeJS_version" => [
 				"type" => "select",
 				"options" => [
-					"v18: LTS Hydrogen",
-					"v20: LTS Iron",
+					"v24: LTS Krypton",
 					"v22: LTS Jod",
 				],
 			],
